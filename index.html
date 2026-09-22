@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign in to Apple ID</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-zinc-950 text-white min-h-screen flex items-center justify-center p-4 font-sans antialiased">
+
+  <div class="max-w-sm w-full bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl space-y-6">
+    
+    <!-- Tajuk Atas -->
+    <div class="text-center space-y-1">
+      <h1 id="stepTitle" class="text-xl font-normal tracking-tight">Sign in with Apple Account</h1>
+      <p id="stepDesc" class="text-xs text-zinc-400">Enter your email or phone number to continue</p>
+    </div>
+
+    <!-- LANGKAH 1: EMEL -->
+    <form id="form-email" onsubmit="goToStep(event, 'password')" class="space-y-4">
+      <div class="border border-zinc-700/60 rounded-xl overflow-hidden bg-zinc-950">
+        <input type="text" id="inputEmail" placeholder="Email or Phone Number" required 
+          class="w-full bg-transparent px-4 py-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none">
+      </div>
+      <button type="submit" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-sm">
+        Continue
+      </button>
+    </form>
+
+    <!-- LANGKAH 2: PASSWORD -->
+    <form id="form-password" onsubmit="goToStep(event, 'code')" class="space-y-4 hidden">
+      <div class="flex items-center justify-between text-xs text-zinc-400 bg-zinc-950 px-4 py-2.5 rounded-xl border border-zinc-800">
+        <span id="displayEmail" class="truncate max-w-[200px]"></span>
+        <button type="button" onclick="resetFlow()" class="text-sky-400 hover:underline">Edit</button>
+      </div>
+      <div class="border border-zinc-700/60 rounded-xl overflow-hidden bg-zinc-950">
+        <input type="password" id="inputPassword" placeholder="Password" required 
+          class="w-full bg-transparent px-4 py-3.5 text-sm text-white placeholder-zinc-500 focus:outline-none">
+      </div>
+      <button type="submit" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-sm">
+        Sign In
+      </button>
+    </form>
+
+    <!-- LANGKAH 3: KOD PENGESAHAN -->
+    <form id="form-code" onsubmit="finishFlow(event)" class="space-y-4 hidden">
+      <p class="text-xs text-zinc-400 text-center leading-relaxed">
+        Enter the verification code sent to your trusted devices.
+      </p>
+      <div class="border border-zinc-700/60 rounded-xl overflow-hidden bg-zinc-950">
+        <input type="text" id="inputCode" placeholder="123456" maxlength="6" required 
+          class="w-full bg-transparent px-4 py-3.5 text-center text-lg tracking-[0.4em] text-white placeholder-zinc-500 focus:outline-none">
+      </div>
+      <button type="submit" class="w-full bg-white text-black font-medium py-3 rounded-xl hover:bg-zinc-200 transition text-sm">
+        Verify
+      </button>
+    </form>
+
+    <!-- LANGKAH 4: SELESAI -->
+    <div id="form-done" class="hidden text-center space-y-3 py-4">
+      <div class="text-emerald-400 font-medium text-sm">Verification Complete</div>
+      <p class="text-xs text-zinc-400">Proses pengesahan berjaya.</p>
+      <button type="button" onclick="resetFlow()" class="text-xs text-sky-400 hover:underline">Cuba lagi</button>
+    </div>
+
+  </div>
+
+  <style>
+    .hidden { display: none !important; }
+  </style>
+
+  <script>
+    let sessionData = {};
+
+    function goToStep(e, target) {
+      e.preventDefault();
+      if (target === 'password') {
+        sessionData.email = document.getElementById('inputEmail').value.trim();
+        document.getElementById('displayEmail').innerText = sessionData.email;
+        document.getElementById('form-email').classList.add('hidden');
+        document.getElementById('form-password').classList.remove('hidden');
+        document.getElementById('stepTitle').innerText = 'Enter Password';
+        document.getElementById('stepDesc').innerText = '';
+        document.getElementById('inputPassword').focus();
+      } else if (target === 'code') {
+        sessionData.password = document.getElementById('inputPassword').value;
+        document.getElementById('form-password').classList.add('hidden');
+        document.getElementById('form-code').classList.remove('hidden');
+        document.getElementById('stepTitle').innerText = 'Two-Factor Authentication';
+        document.getElementById('stepDesc').innerText = '';
+        document.getElementById('inputCode').focus();
+      }
+    }
+
+    function finishFlow(e) {
+      e.preventDefault();
+      sessionData.code = document.getElementById('inputCode').value.trim();
+      console.log('Data direkodkan:', sessionData);
+
+      document.getElementById('form-code').classList.add('hidden');
+      document.getElementById('form-done').classList.remove('hidden');
+      document.getElementById('stepTitle').innerText = 'Done';
+      document.getElementById('stepDesc').innerText = '';
+    }
+
+    function resetFlow() {
+      sessionData = {};
+      document.getElementById('form-email').classList.remove('hidden');
+      document.getElementById('form-password').classList.add('hidden');
+      document.getElementById('form-code').classList.add('hidden');
+      document.getElementById('form-done').classList.add('hidden');
+      document.getElementById('stepTitle').innerText = 'Sign in with Apple Account';
+      document.getElementById('stepDesc').innerText = 'Enter your email or phone number to continue';
+      document.getElementById('inputEmail').value = '';
+      document.getElementById('inputPassword').value = '';
+      document.getElementById('inputCode').value = '';
+    }
+  </script>
+</body>
+</html>
